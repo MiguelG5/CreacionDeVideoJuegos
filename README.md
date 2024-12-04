@@ -2,7 +2,7 @@
 Repositorio que contiene los trabajos realizados en la clase de Creación de Videojuegos 2024.
 
 # U2. PROGRAMACIÓN ORIENTADA A OBJETOS PARA VIDEOJUEGOS
-**Gutiérrez Díaz Cristian Emmanuel**  
+**Jaime Garcia Miguel Angel**  
 **GIDS4102**
 
 ### *TABLA DE CONTENIDO*
