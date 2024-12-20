@@ -19,16 +19,21 @@ namespace Platformer.Gameplay
             var player = model.player;
             if (player.health.IsAlive)
             {
+                // Marcar al jugador como muerto
                 player.health.Die();
+
+                // Detener el seguimiento de la cámara del jugador
                 model.virtualCamera.m_Follow = null;
                 model.virtualCamera.m_LookAt = null;
-                // player.collider.enabled = false;
+
+                // Deshabilitar el control del jugador
                 player.controlEnabled = false;
 
-                if (player.audioSource && player.ouchAudio)
-                    player.audioSource.PlayOneShot(player.ouchAudio);
+                // Realizar la animación de herido y muerte
                 player.animator.SetTrigger("hurt");
                 player.animator.SetBool("dead", true);
+
+                // Programar el evento de reaparición después de un tiempo
                 Simulation.Schedule<PlayerSpawn>(2);
             }
         }

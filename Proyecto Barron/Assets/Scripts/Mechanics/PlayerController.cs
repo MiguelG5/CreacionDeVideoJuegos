@@ -10,13 +10,10 @@ namespace Platformer.Mechanics
 {
     /// <summary>
     /// This is the main class used to implement control of the player.
-    /// It is a superset of the AnimationController class, but is inlined to allow for any kind of customisation.
     /// </summary>
     public class PlayerController : KinematicObject
     {
         public AudioClip jumpAudio;
-        public AudioClip respawnAudio;
-        public AudioClip ouchAudio;
 
         /// <summary>
         /// Max horizontal speed of the player.
@@ -29,8 +26,8 @@ namespace Platformer.Mechanics
 
         public JumpState jumpState = JumpState.Grounded;
         private bool stopJump;
-        /*internal new*/ public Collider2D collider2d;
-        /*internal new*/ public AudioSource audioSource;
+        public Collider2D collider2d;
+        public AudioSource audioSource;
         public Health health;
         public bool controlEnabled = true;
 
@@ -49,6 +46,12 @@ namespace Platformer.Mechanics
             collider2d = GetComponent<Collider2D>();
             spriteRenderer = GetComponent<SpriteRenderer>();
             animator = GetComponent<Animator>();
+
+            // Verificación de audio asignado
+            if (audioSource == null)
+                Debug.LogWarning("AudioSource no encontrado. Asegúrate de asignar el componente en el GameObject.");
+            if (jumpAudio == null)
+                Debug.LogWarning("Jump AudioClip no asignado.");
         }
 
         protected override void Update()
@@ -56,8 +59,15 @@ namespace Platformer.Mechanics
             if (controlEnabled)
             {
                 move.x = Input.GetAxis("Horizontal");
+
                 if (jumpState == JumpState.Grounded && Input.GetButtonDown("Jump"))
+                {
                     jumpState = JumpState.PrepareToJump;
+
+                    // Reproduce sonido de salto si está asignado
+                    if (jumpAudio != null && audioSource != null)
+                        audioSource.PlayOneShot(jumpAudio);
+                }
                 else if (Input.GetButtonUp("Jump"))
                 {
                     stopJump = true;
@@ -68,6 +78,7 @@ namespace Platformer.Mechanics
             {
                 move.x = 0;
             }
+
             UpdateJumpState();
             base.Update();
         }

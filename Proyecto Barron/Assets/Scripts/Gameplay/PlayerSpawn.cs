@@ -9,21 +9,34 @@ namespace Platformer.Gameplay
     /// </summary>
     public class PlayerSpawn : Simulation.Event<PlayerSpawn>
     {
-        PlatformerModel model = Simulation.GetModel<PlatformerModel>();
-
         public override void Execute()
         {
-            var player = model.player;
+            var player = Simulation.GetModel<PlatformerModel>().player;
+
+            // Habilitar el collider del jugador
             player.collider2d.enabled = true;
+
+            // Desactivar el control temporalmente
             player.controlEnabled = false;
-            if (player.audioSource && player.respawnAudio)
-                player.audioSource.PlayOneShot(player.respawnAudio);
+
+            // Incrementar la salud del jugador
             player.health.Increment();
-            player.Teleport(model.spawnPoint.transform.position);
-            player.jumpState = PlayerController.JumpState.Grounded;
+
+            // Teletransportar al jugador a la posición de inicio
+            player.Teleport(Simulation.GetModel<PlatformerModel>().spawnPoint.transform.position);
+
+            // Establecer el estado de salto del jugador
+            player.GetComponent<PlayerController>().jumpState = PlayerController.JumpState.Grounded;
+
+            // Detener la animación de muerte
             player.animator.SetBool("dead", false);
-            model.virtualCamera.m_Follow = player.transform;
-            model.virtualCamera.m_LookAt = player.transform;
+
+            // Configurar la cámara virtual para seguir al jugador
+            var virtualCamera = Simulation.GetModel<PlatformerModel>().virtualCamera;
+            virtualCamera.m_Follow = player.transform;
+            virtualCamera.m_LookAt = player.transform;
+
+            // Programar el evento para habilitar el control del jugador después de un retraso
             Simulation.Schedule<EnablePlayerInput>(2f);
         }
     }
